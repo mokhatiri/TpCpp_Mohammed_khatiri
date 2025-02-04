@@ -7,7 +7,7 @@
     #include <iostream>
 
     #define PI 3.14159265359
-    #define DEBUG
+
     int main(){
         #ifdef DEBUG
             std::cout << "debug macro exists" << std::endl;
@@ -19,7 +19,9 @@
     #include <iostream>
     // Utilisation de la fonction main
     int main(int argc, char* argv[]){
-        for(int i = 0; i < argc; i++){
+
+        // start from 1 rather then 0, since the argv[0] is the file name
+        for(int i = 1; i < argc; i++){
             std::cout << "Argument " << i << ":  " << argv[i] << std::endl;
         }
         return 0;
@@ -49,7 +51,21 @@
     }
 #elif EXO == 4
     // Entrée et sortie avec cin et cout
-    
-#else
+    #include <iostream>
 
-#endif
+    int main(){
+        // getting an integer from the user
+        int entier;
+        std::cout << "Entrez un entier: ";
+        std::cin >> entier;
+        // getting a float from the user
+        float decimal;
+        std::cout << "Entrez un nombre decimal: ";
+        std::cin >> decimal;
+        // printing the values
+        std::cout << "Valeurs saisies:" << entier << " et " << decimal << std::endl;
+    }
+#else
+    // throw an error if the EXO variable is not in the range of the defined EXO
+    #error "EXO variable is not in the range of the defined EXOs"
+#endif  

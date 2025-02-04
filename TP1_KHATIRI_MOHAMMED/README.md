@@ -50,7 +50,7 @@ when:
   - k != 1,2,3,4,5 an error is thrown
 
 ## exercice 1:
-Aﬀichage d’un message:
+Aﬀichage d’un message
 ## exercice 2:
 Lecture et aﬀichage d’un entier
 ## exercice 3:
