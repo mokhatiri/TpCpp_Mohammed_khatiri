@@ -1,5 +1,5 @@
 #ifndef EXO
-    #define EXO 4
+    #define EXO 1
 #endif
 
 #if EXO == 1
