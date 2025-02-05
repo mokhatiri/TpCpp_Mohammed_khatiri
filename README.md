@@ -53,7 +53,6 @@ This repository does not have a license specified.
 ## Topics
 
 This repository covers the following topics:
-- C
 - C++
 - Exercises
 - Programming Languages
