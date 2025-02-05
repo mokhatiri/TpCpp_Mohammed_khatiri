@@ -53,7 +53,7 @@ Utilisation des directives du préprocesseur
 - the default case is the case where macro 'DEBUG' is not defined
 - to check the case where macro 'DEBUG' is defined, when compiling, use the -DDEBUG option:
 ```sh
-g++ -o Exo_1 main.cpp -std=c++17 -DEXO=1
+g++ -o Exo_1 main.cpp -std=c++17 -DEXO=1 -DDEBUG
 ```
 
 ## exercice 2:
