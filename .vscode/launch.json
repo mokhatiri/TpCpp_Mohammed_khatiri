@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/moham/Desktop/um6p/TpCpp_Mohammed_khatiri/TP2_KHATIRI_MOHAMMED",
-      "program": "c:/Users/moham/Desktop/um6p/TpCpp_Mohammed_khatiri/TP2_KHATIRI_MOHAMMED/build/Debug/outDebug",
+      "cwd": "c:/Users/moham/Desktop/um6p/TpCpp_Mohammed_khatiri/TP4_KHATIRI_MOHAMMED",
+      "program": "c:/Users/moham/Desktop/um6p/TpCpp_Mohammed_khatiri/TP4_KHATIRI_MOHAMMED/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
