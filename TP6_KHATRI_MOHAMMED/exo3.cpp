@@ -1,4 +1,11 @@
 // gestion d'un arbre binaire de recherche
+/*
+warning: this is not a self balancing BST;
+for example in the case of adding the nodes 1, 2, 3, ... ,9
+this will cause a highly unbalanced BST, with lookup similar to a simple linked list.
+1 -> 2 -> ... -> 9 (very bad)
+*/
+
 #include <iostream>
 
 
@@ -111,15 +118,26 @@ struct BST{
                 else{
                     // the case where he has both
                     Node* temp = current->right;
+                    Node* tempParent = current; 
 
                     while(temp->left != nullptr){
+                        tempParent = temp;
                         temp = temp->left;
                     } // keep going untill the next value is nullptr, and add the whole left tree to that node
+                    
+                    if(temp->right != nullptr){
+                        // in case the node has a right child, point it to the left of the parent; the structure is kept
+                        tempParent->left = temp->right;
+                        tempParent = nullptr; // free this ptr as it has no further use;
+                    }
+                    // next put the temp at the place of the node of interest.
+                    temp->right = current->right;
                     temp->left = current->left;
                     if(parent->left == current) parent->left = temp;
                     else parent->right = temp;
-                    delete current; // free the memory
+                    delete current;
                 }
+                current = nullptr;
                 return;
             }
             else if(val < current->val){
