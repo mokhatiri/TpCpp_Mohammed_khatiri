@@ -9,6 +9,6 @@ cloud: $(OBJS)
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $<
-
+canv
 clean:
 	rm -f *.o cloud
