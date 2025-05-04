@@ -20,7 +20,7 @@ public:
     Paire(const T& a, const U& b) : premier(a), second(b) {}
 
     void afficher() const override {
-        if constexpr (std::is_same_v<U, bool>) {
+        if constexpr (std::is_same<U, bool>::value) {
             std::cout << premier << " : " << (second ? "vrai" : "faux") << std::endl;
         } else {
             std::cout << premier << " : " << second << std::endl;
@@ -36,8 +36,7 @@ private:
 public:
     Paire(const T& a, int b) : premier(a), second(b) {}
 
-    // to override
     void afficher() const override {
-        std::cout << premier << " : " << second << " (entier)" << std::endl;
+        std::cout << premier << " : " << second << " (entier) " << std::endl;
     }
 };
