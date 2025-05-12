@@ -1,7 +1,9 @@
 #include "Container.hpp"
+#include <sstream>
+#include <iomanip>
 
-Container::Container(std::string id, std::string image, double cpu, double memory)
-    : Resource(std::move(id), cpu, memory), image_(std::move(image)) {}
+Container::Container(const std::string& id, const std::string& image, double cpu, double memory)
+    : Resource(id, cpu, memory), image(image) {}
 
 void Container::start() {
     active_ = true;
@@ -12,10 +14,14 @@ void Container::stop() {
 }
 
 std::string Container::getMetrics() const {
-    return "[Container: " + id_ + ": " + std::to_string(cpu_) + " CPU, " +
-           std::to_string(memory_) + " Memory, " + image_ + "]";
+    std::ostringstream oss;
+    oss << "[Container: " << std::left << std::setw(10) << id_ << " : "
+        << std::fixed << std::setprecision(0) << cpu_ << " CPU, "
+        << std::fixed << std::setprecision(0) << memory_ << " Memory, " << image << " ]" << std::endl;
+    return oss.str();
 }
 
 std::ostream& operator<<(std::ostream& os, const Container& c) {
-    return os << c.getMetrics();
+    os << c.getMetrics();
+    return os;
 }

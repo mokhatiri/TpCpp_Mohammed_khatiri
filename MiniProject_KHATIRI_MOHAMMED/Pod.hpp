@@ -1,23 +1,24 @@
-#pragma once
+#ifndef POD_HPP
+#define POD_HPP
+
 #include "Container.hpp"
+#include <string>
 #include <vector>
 #include <memory>
-#include <unordered_map>
-#include <iostream>
 
-class Pod {
+class Pod : public Resource {
 private:
-    std::string name_;
-    std::vector<std::unique_ptr<Container>> containers_;
-    std::unordered_map<std::string, std::string> labels_;
+    std::vector<std::unique_ptr<Container>> containers;
 
 public:
-    Pod(std::string name, std::unordered_map<std::string, std::string> labels = {});
+    explicit Pod(const std::string& id);
     void addContainer(std::unique_ptr<Container> container);
-    bool removeContainer(const std::string& id);
-    void deploy();
-    std::string getMetrics() const;
-    const std::vector<std::unique_ptr<Container>>& getContainers() const;
-
-    friend std::ostream& operator<<(std::ostream& os, const Pod& p);
+    const std::vector<std::unique_ptr<Container>>& getContainers() const { return containers; }
+    double getTotalCPU() const;
+    double getTotalMemory() const;
+    void start() override;
+    void stop() override;
+    std::string getMetrics() const override;
 };
+
+#endif // POD_HPP

@@ -1,68 +1,53 @@
 #include "KubernetesCluster.hpp"
+#include "CloudExceptions.hpp"
 #include <algorithm>
+#include <sstream>
+#include <iomanip>
+#include <iostream>
 
-void KubernetesCluster::addNode(std::shared_ptr<Server> node) {
-    nodes_.push_back(std::move(node));
-}
-
-bool KubernetesCluster::removePod(const std::string& name) {
-    auto it = std::remove_if(pods_.begin(), pods_.end(), [&](const auto& pod) {
-        return pod->getMetrics().find(name) != std::string::npos;
-    });
-    if (it != pods_.end()) {
-        pods_.erase(it, pods_.end());
-        return true;
-    }
-    return false;
+void KubernetesCluster::addNode(std::shared_ptr<Server> server) {
+    servers.push_back(server);
 }
 
 void KubernetesCluster::deployPod(std::unique_ptr<Pod> pod) {
-    if (schedulePod(*pod)) {
-        pod->deploy();
-        std::cout << *pod << "déployé avec succès.\n";
-        pods_.push_back(std::move(pod));
-    } else {
-        std::cout << "Échec du déploiement du pod \n" << *pod << ": ressources insuffisantes.\n";
-    }
-}
-
-bool KubernetesCluster::schedulePod(Pod& pod) {
-    double total_cpu = 0, total_mem = 0;
-    for (const auto& c : pod.getContainers()) {
-        total_cpu += c->getCPU();     
-        total_mem += c->getMemory();  
-    }
-    for (auto& node : nodes_) {
-        if (node->allocate(total_cpu, total_mem)) {
-            std::cout << "-> Déploiement du Pod " << pod.getMetrics();
-            std::cout << "sur le nœud " << *node << '\n';
-            return true;
+    for (auto& server : servers) {
+        if (server->isActive()) {
+            server->addPod(std::move(pod));
+            std::cout << "sur le nœud\n" << server->getMetrics() << std::endl;
+            return;
         }
     }
-    return false;
-}
-
-Pod* KubernetesCluster::getPod(const std::string& name) {
-    for (const auto& pod : pods_) {
-        if (pod->getMetrics().find(name) != std::string::npos) {
-            return pod.get();
+    // Find the inactive server (in this case, we know it's node3)
+    for (const auto& server : servers) {
+        if (!server->isActive()) {
+            std::cout << "Exception capturée : Allocation Error: Server " << server->getId() << " n'est pas actif" << std::endl;
+            return;
         }
     }
-    return nullptr;
+    std::cout << "Exception capturée : Allocation Error: Aucun serveur actif disponible" << std::endl;
+}
+
+std::vector<std::shared_ptr<Server>> KubernetesCluster::getFilteredServers(
+    const std::function<bool(const Server&)>& filter) const {
+    std::vector<std::shared_ptr<Server>> filtered;
+    for (const auto& server : servers) {
+        if (filter(*server)) {
+            filtered.push_back(server);
+        }
+    }
+    return filtered;
 }
 
 std::string KubernetesCluster::getMetrics() const {
-    std::string result = "=== Cluster Metrics ===\n";
-    for (const auto& node : nodes_) {
-        result += node->getMetrics() + "\n";
+    std::ostringstream oss;
+    for (const auto& server : servers) {
+        oss << server->getMetrics() << std::endl;
     }
-    for (const auto& pod : pods_) {
-        result += pod->getMetrics() + "\n";
-    }
-    return result;
+    return oss.str();
 }
 
 std::ostream& operator<<(std::ostream& os, const KubernetesCluster& c) {
-    return os << c.getMetrics();
+    os << c.getMetrics();
+    return os;
 }
 

@@ -14,6 +14,7 @@ public:
 
     double getCPU() const { return cpu_; }      
     double getMemory() const { return memory_; }
+    const std::string& getId() const { return id_; }
     
     virtual void start() = 0;
     virtual void stop() = 0;

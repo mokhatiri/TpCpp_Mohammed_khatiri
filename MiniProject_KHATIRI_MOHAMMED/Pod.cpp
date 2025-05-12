@@ -1,42 +1,44 @@
 #include "Pod.hpp"
-#include <algorithm>
+#include <sstream>
+#include <iomanip>
+#include <numeric>
 
-Pod::Pod(std::string name, std::unordered_map<std::string, std::string> labels)
-    : name_(std::move(name)), labels_(std::move(labels)) {}
+Pod::Pod(const std::string& id) : Resource(id, 0.0, 0.0) {}
 
 void Pod::addContainer(std::unique_ptr<Container> container) {
-    containers_.push_back(std::move(container));
+    cpu_ += container->getCPU();
+    memory_ += container->getMemory();
+    containers.push_back(std::move(container));
 }
 
-bool Pod::removeContainer(const std::string& id) {
-    auto it = std::remove_if(containers_.begin(), containers_.end(), [&](const auto& c) {
-        return c->getMetrics().find(id) != std::string::npos;
-    });
-    if (it != containers_.end()) {
-        containers_.erase(it, containers_.end());
-        return true;
-    }
-    return false;
+double Pod::getTotalCPU() const {
+    return std::accumulate(containers.begin(), containers.end(), 0.0,
+        [](double sum, const auto& container) { return sum + container->getCPU(); });
 }
 
-void Pod::deploy() {
-    for (auto& container : containers_) {
-        container->start();
-    }
+double Pod::getTotalMemory() const {
+    return std::accumulate(containers.begin(), containers.end(), 0.0,
+        [](double sum, const auto& container) { return sum + container->getMemory(); });
+}
+
+void Pod::start() {
+    active_ = true;
+}
+
+void Pod::stop() {
+    active_ = false;
 }
 
 std::string Pod::getMetrics() const {
-    std::string result = "[Pod: " + name_ + "]\n";
-    for (const auto& container : containers_) {
-        result += container->getMetrics() + "\n";
+    std::ostringstream oss;
+    oss << "[Pod: " << std::left << std::setw(10) << id_ << "]" << std::endl;
+    for (const auto& container : containers) {
+        oss << container->getMetrics();
     }
-    return result;
-}
-
-const std::vector<std::unique_ptr<Container>>& Pod::getContainers() const {
-    return containers_;
+    return oss.str();
 }
 
 std::ostream& operator<<(std::ostream& os, const Pod& p) {
-    return os << p.getMetrics();
+    os << p.getMetrics();
+    return os;
 }
